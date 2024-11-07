@@ -11,8 +11,9 @@ public class PaymentService implements IPaymentService {
     @Autowired
     private PaymentGatewayChooserStrategy paymentGatewayChooserStrategy;
 
-    public String getPaymentLink(String name, String phoneNumber, String email, String orderId) {
+    @Override
+    public String getPaymentLink(String name, String phoneNumber, String email, String orderId, Double amount) {
         IPaymentGateway paymentGateway = paymentGatewayChooserStrategy.getBestPaymentGateway();
-        return paymentGateway.getPayLink(name, phoneNumber, email, orderId);
+        return paymentGateway.getPayLink(name, phoneNumber, email, orderId, amount);
     }
 }

@@ -14,10 +14,10 @@ public class RazorpayPaymentGateway implements IPaymentGateway {
     private RazorpayClient razorpayClient;
 
     @Override
-    public String getPayLink(String name, String phoneNumber, String email, String orderId) {
+    public String getPayLink(String name, String phoneNumber, String email, String orderId, Double amount) {
         try {
             JSONObject paymentLinkRequest = new JSONObject();
-            paymentLinkRequest.put("amount", 1000);
+            paymentLinkRequest.put("amount", amount);
             paymentLinkRequest.put("currency", "INR");
             paymentLinkRequest.put("accept_partial", true);
             paymentLinkRequest.put("first_min_partial_amount", 100);

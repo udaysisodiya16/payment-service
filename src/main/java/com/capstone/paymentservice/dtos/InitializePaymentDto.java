@@ -6,8 +6,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class InitializePaymentDto {
-    String name;
-    String phoneNumber;
-    String email;
-    String orderId;
+
+    private String name;
+    private String phoneNumber;
+    private String email;
+    private String orderId;
+    private Double amount;
+
 }
