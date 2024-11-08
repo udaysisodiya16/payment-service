@@ -26,10 +26,10 @@ public class PaymentService implements IPaymentService {
         payment.setAmount(amount);
         payment.setStatus(PaymentStatus.PENDING);
         payment.setCreatedAt(LocalDateTime.now());
-        paymentRepo.save(payment);
+        payment = paymentRepo.save(payment);
 
         IPaymentGateway paymentGateway = paymentGatewayChooserStrategy.getBestPaymentGateway();
-        return paymentGateway.getPayLink(name, phoneNumber, email, orderId, amount);
+        return paymentGateway.getPayLink(name, phoneNumber, email, orderId, amount, payment.getTransactionId());
     }
 
     @Override

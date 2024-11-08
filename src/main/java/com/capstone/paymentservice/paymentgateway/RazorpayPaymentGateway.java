@@ -14,7 +14,7 @@ public class RazorpayPaymentGateway implements IPaymentGateway {
     private RazorpayClient razorpayClient;
 
     @Override
-    public String getPayLink(String name, String phoneNumber, String email, Long orderId, Double amount) {
+    public String getPayLink(String name, String phoneNumber, String email, Long orderId, Double amount, Long transactionId) {
         try {
             JSONObject paymentLinkRequest = new JSONObject();
             paymentLinkRequest.put("amount", amount);
