@@ -2,6 +2,7 @@ package com.capstone.paymentservice.controllers;
 
 import com.capstone.paymentservice.dtos.InitializePaymentDto;
 import com.capstone.paymentservice.services.IPaymentService;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +29,9 @@ public class PaymentController {
 
     @PostMapping("/callback")
     public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) {
-        Long orderId = Long.valueOf(payload.get("order_id"));
-        Long transactionId = Long.valueOf(payload.get("transaction_id"));
-        String paymentStatus = payload.get("status");
+        @NotBlank Long orderId = Long.valueOf(payload.get("order_id"));
+        @NotBlank Long transactionId = Long.valueOf(payload.get("transaction_id"));
+        @NotBlank String paymentStatus = payload.get("status");
         Boolean status = paymentService.updatePaymentStatus(orderId, transactionId, paymentStatus);
         return ResponseEntity.ok(status);
     }

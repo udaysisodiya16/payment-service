@@ -1,5 +1,6 @@
 package com.capstone.paymentservice.services;
 
+import com.capstone.paymentservice.KafkaClient;
 import com.capstone.paymentservice.models.PaymentModel;
 import com.capstone.paymentservice.models.PaymentStatus;
 import com.capstone.paymentservice.paymentgateway.IPaymentGateway;
@@ -19,6 +20,9 @@ public class PaymentService implements IPaymentService {
     @Autowired
     private PaymentRepo paymentRepo;
 
+    @Autowired
+    private KafkaClient kafkaClient;
+
     @Override
     public String getPaymentLink(String name, String phoneNumber, String email, Long orderId, Double amount) {
         PaymentModel payment = new PaymentModel();
@@ -35,11 +39,15 @@ public class PaymentService implements IPaymentService {
     @Override
     public Boolean updatePaymentStatus(Long orderId, Long transactionId, String paymentStatus) {
         //Call validate Token Api
-
         PaymentModel payment = paymentRepo.findByOrderIdAndTransactionId(orderId, transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid orderId Or transactionId"));
         payment.setStatus(PaymentStatus.valueOf(paymentStatus));
         paymentRepo.save(payment);
+
+        if (PaymentStatus.SUCCESS.name().equals(paymentStatus)) {
+            kafkaClient
+        }
+
         return true;
     }
 }
