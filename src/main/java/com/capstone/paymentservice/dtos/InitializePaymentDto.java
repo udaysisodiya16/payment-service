@@ -10,7 +10,7 @@ public class InitializePaymentDto {
     private String name;
     private String phoneNumber;
     private String email;
-    private String orderId;
+    private Long orderId;
     private Double amount;
 
 }

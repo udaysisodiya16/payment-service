@@ -16,7 +16,7 @@ public class StripePaymentGateway implements IPaymentGateway {
     private String apiKey;
 
     @Override
-    public String getPayLink(String name, String phoneNumber, String email, String orderId, Double amount) {
+    public String getPayLink(String name, String phoneNumber, String email, Long orderId, Double amount) {
         try {
             Stripe.apiKey = this.apiKey;
 
