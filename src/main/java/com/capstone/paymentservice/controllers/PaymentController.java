@@ -28,8 +28,8 @@ public class PaymentController {
 
     @PostMapping("/callback")
     public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) {
-        Long orderId = Long.valueOf(payload.get("orderId"));
-        Long transactionId = Long.valueOf(payload.get("transactionId"));
+        Long orderId = Long.valueOf(payload.get("order_id"));
+        Long transactionId = Long.valueOf(payload.get("transaction_id"));
         String paymentStatus = payload.get("status");
         Boolean status = paymentService.updatePaymentStatus(orderId, transactionId, paymentStatus);
         return ResponseEntity.ok(status);

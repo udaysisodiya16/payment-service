@@ -15,6 +15,9 @@ public class StripePaymentGateway implements IPaymentGateway {
     @Value("${stripe.key}")
     private String apiKey;
 
+    @Value("$(callback.url)")
+    private String callbackUrl;
+
     @Override
     public String getPayLink(String name, String phoneNumber, String email, Long orderId, Double amount, Long transactionId) {
         try {
@@ -32,7 +35,7 @@ public class StripePaymentGateway implements IPaymentGateway {
                             ).setAfterCompletion(PaymentLinkCreateParams.AfterCompletion.builder()
                                     .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
                                     .setRedirect(PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
-                                            .setUrl("https://scaler.com").build()).build())
+                                            .setUrl(callbackUrl).build()).build())
                             .build();
             PaymentLink paymentLink = PaymentLink.create(params);
             return paymentLink.getUrl();
