@@ -1,11 +1,14 @@
 package com.capstone.paymentservice.services;
 
-import com.capstone.paymentservice.KafkaClient;
+import com.capstone.paymentservice.clients.KafkaClient;
+import com.capstone.paymentservice.dtos.PaymentNotificationDto;
 import com.capstone.paymentservice.models.PaymentModel;
 import com.capstone.paymentservice.models.PaymentStatus;
 import com.capstone.paymentservice.paymentgateway.IPaymentGateway;
 import com.capstone.paymentservice.paymentgateway.PaymentGatewayChooserStrategy;
 import com.capstone.paymentservice.repos.PaymentRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,9 @@ public class PaymentService implements IPaymentService {
     @Autowired
     private KafkaClient kafkaClient;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public String getPaymentLink(String name, String phoneNumber, String email, Long orderId, Double amount) {
         PaymentModel payment = new PaymentModel();
@@ -37,7 +43,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public Boolean updatePaymentStatus(Long orderId, Long transactionId, String paymentStatus) {
+    public Boolean updatePaymentStatus(Long orderId, Long transactionId, String paymentStatus) throws JsonProcessingException {
         //Call validate Token Api
         PaymentModel payment = paymentRepo.findByOrderIdAndTransactionId(orderId, transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid orderId Or transactionId"));
@@ -45,7 +51,11 @@ public class PaymentService implements IPaymentService {
         paymentRepo.save(payment);
 
         if (PaymentStatus.SUCCESS.name().equals(paymentStatus)) {
-            kafkaClient
+            PaymentNotificationDto paymentNotificationDto = new PaymentNotificationDto();
+            paymentNotificationDto.setOrderId(orderId);
+            paymentNotificationDto.setPaymentStatus(paymentStatus);
+            String message = objectMapper.writeValueAsString(paymentNotificationDto);
+            kafkaClient.sendPaymentNotification(message);
         }
 
         return true;
