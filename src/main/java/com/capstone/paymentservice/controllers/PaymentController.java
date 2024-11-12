@@ -2,6 +2,7 @@ package com.capstone.paymentservice.controllers;
 
 import com.capstone.paymentservice.dtos.InitializePaymentDto;
 import com.capstone.paymentservice.services.IPaymentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class PaymentController {
     }
 
     @PostMapping("/callback")
-    public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) throws JsonProcessingException {
         @NotBlank Long orderId = Long.valueOf(payload.get("order_id"));
         @NotBlank Long transactionId = Long.valueOf(payload.get("transaction_id"));
         @NotBlank String paymentStatus = payload.get("status");

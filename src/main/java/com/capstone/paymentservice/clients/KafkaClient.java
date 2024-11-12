@@ -1,4 +1,4 @@
-package com.capstone.paymentservice;
+package com.capstone.paymentservice.clients;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
