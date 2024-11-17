@@ -3,7 +3,10 @@ package com.capstone.paymentservice.controllers;
 import com.capstone.paymentservice.dtos.InitializePaymentDto;
 import com.capstone.paymentservice.services.IPaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +24,7 @@ public class PaymentController {
     private IPaymentService paymentService;
 
     @PostMapping
-    public ResponseEntity<String> initializePayment(@RequestBody InitializePaymentDto initializePaymentDto) {
+    public ResponseEntity<String> initializePayment(@RequestBody @Valid InitializePaymentDto initializePaymentDto) {
         String paymentLink = paymentService.getPaymentLink(initializePaymentDto.getName(),
                 initializePaymentDto.getPhoneNumber(), initializePaymentDto.getEmail(),
                 initializePaymentDto.getOrderId(), initializePaymentDto.getAmount());
@@ -30,8 +33,8 @@ public class PaymentController {
 
     @PostMapping("/callback")
     public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) throws JsonProcessingException {
-        @NotBlank Long orderId = Long.valueOf(payload.get("order_id"));
-        @NotBlank Long transactionId = Long.valueOf(payload.get("transaction_id"));
+        @NotNull @Positive Long orderId = Long.valueOf(payload.get("order_id"));
+        @NotNull @Positive Long transactionId = Long.valueOf(payload.get("transaction_id"));
         @NotBlank String paymentStatus = payload.get("status");
         Boolean status = paymentService.updatePaymentStatus(orderId, transactionId, paymentStatus);
         return ResponseEntity.ok(status);
