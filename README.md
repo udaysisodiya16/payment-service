@@ -143,7 +143,7 @@ The application will be accessible at `http://localhost:8085`.
   "orderId": 12345,
   "amount": 150.75,
   "status": "SUCCESS",
-  "createdAt": "2024-11-18T10:30:00Z"
+  "createdAt": "2024-11-18T10:30:00Z",
   "receiptUrl": "/url"
 }
 ```
