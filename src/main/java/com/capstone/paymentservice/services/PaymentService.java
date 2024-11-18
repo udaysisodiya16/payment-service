@@ -9,12 +9,15 @@ import com.capstone.paymentservice.paymentgateway.PaymentGatewayChooserStrategy;
 import com.capstone.paymentservice.repos.PaymentRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
+@Transactional
 public class PaymentService implements IPaymentService {
 
     @Autowired
@@ -57,7 +60,11 @@ public class PaymentService implements IPaymentService {
             String message = objectMapper.writeValueAsString(paymentNotificationDto);
             kafkaClient.sendPaymentNotification(message);
         }
-
         return true;
+    }
+
+    @Override
+    public List<PaymentModel> getPaymentDetail(Long orderId) {
+        return paymentRepo.findAllByOrderId(orderId);
     }
 }

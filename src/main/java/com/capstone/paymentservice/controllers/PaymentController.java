@@ -1,19 +1,21 @@
 package com.capstone.paymentservice.controllers;
 
 import com.capstone.paymentservice.dtos.InitializePaymentDto;
+import com.capstone.paymentservice.dtos.PaymentDetailResponse;
+import com.capstone.paymentservice.mappers.PaymentMapper;
+import com.capstone.paymentservice.models.PaymentModel;
 import com.capstone.paymentservice.services.IPaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,6 +24,9 @@ public class PaymentController {
 
     @Autowired
     private IPaymentService paymentService;
+
+    @Autowired
+    private PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
 
     @PostMapping
     public ResponseEntity<String> initializePayment(@RequestBody @Valid InitializePaymentDto initializePaymentDto) {
@@ -38,5 +43,11 @@ public class PaymentController {
         @NotBlank String paymentStatus = payload.get("status");
         Boolean status = paymentService.updatePaymentStatus(orderId, transactionId, paymentStatus);
         return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<List<PaymentDetailResponse>> getPaymentDetail(@PathVariable @NotBlank Long orderId) throws JsonProcessingException {
+        List<PaymentModel> paymentDetails = paymentService.getPaymentDetail(orderId);
+        return ResponseEntity.ok(paymentMapper.paymentModelsToPaymentDetailResponses(paymentDetails));
     }
 }

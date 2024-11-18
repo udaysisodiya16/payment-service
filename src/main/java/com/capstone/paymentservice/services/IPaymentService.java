@@ -1,6 +1,9 @@
 package com.capstone.paymentservice.services;
 
+import com.capstone.paymentservice.models.PaymentModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.List;
 
 public interface IPaymentService {
 
@@ -8,4 +11,5 @@ public interface IPaymentService {
 
     Boolean updatePaymentStatus(Long orderId, Long transactionId, String paymentStatus) throws JsonProcessingException;
 
+    List<PaymentModel> getPaymentDetail(Long orderId);
 }
