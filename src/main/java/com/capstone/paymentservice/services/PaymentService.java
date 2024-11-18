@@ -34,6 +34,10 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public String getPaymentLink(String name, String phoneNumber, String email, Long orderId, Double amount) {
+        //Check Payment Already Done
+        paymentRepo.findAllByOrderIdAndStatus(orderId, PaymentStatus.SUCCESS)
+                .orElseThrow(() -> new IllegalArgumentException("Payment Already Done"));
+
         PaymentModel payment = new PaymentModel();
         payment.setOrderId(orderId);
         payment.setAmount(amount);
@@ -64,7 +68,12 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public List<PaymentModel> getPaymentDetail(Long orderId) {
+    public PaymentModel getPaymentDetail(Long transactionId) {
+        return paymentRepo.findById(transactionId).orElseThrow(() -> new IllegalArgumentException("Invalid transactionId"));
+    }
+
+    @Override
+    public List<PaymentModel> getOrderPaymentDetail(Long orderId) {
         return paymentRepo.findAllByOrderId(orderId);
     }
 }

@@ -150,7 +150,7 @@ The application will be accessible at `http://localhost:8085`.
 
 ### **3. Get All Order Payment Details**
 
-- **URL:** `GET /payment/{orderId}`
+- **URL:** `GET /payment//order/{orderId}`
 - **Response:**
 
 ```json

@@ -11,4 +11,5 @@ public interface PaymentMapper {
 
     List<PaymentDetailResponse> paymentModelsToPaymentDetailResponses(List<PaymentModel> paymentDetails);
 
+    PaymentDetailResponse paymentModelToPaymentDetailResponse(PaymentModel paymentDetail);
 }

@@ -18,6 +18,12 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<String> handleIllegalArgumentException(Exception exception) {
+        LOG.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({Exception.class})
     public ResponseEntity<String> handleException(Exception exception) {
         LOG.error(exception.getMessage(), exception);

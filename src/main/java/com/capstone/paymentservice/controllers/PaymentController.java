@@ -45,9 +45,15 @@ public class PaymentController {
         return ResponseEntity.ok(status);
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<List<PaymentDetailResponse>> getPaymentDetail(@PathVariable @NotBlank Long orderId) throws JsonProcessingException {
-        List<PaymentModel> paymentDetails = paymentService.getPaymentDetail(orderId);
+    @GetMapping("/{transactionId}")
+    public ResponseEntity<PaymentDetailResponse> getPaymentDetail(@PathVariable Long transactionId) throws JsonProcessingException {
+        PaymentModel paymentDetail = paymentService.getPaymentDetail(transactionId);
+        return ResponseEntity.ok(paymentMapper.paymentModelToPaymentDetailResponse(paymentDetail));
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<List<PaymentDetailResponse>> getOrderPaymentDetail(@PathVariable Long orderId) throws JsonProcessingException {
+        List<PaymentModel> paymentDetails = paymentService.getOrderPaymentDetail(orderId);
         return ResponseEntity.ok(paymentMapper.paymentModelsToPaymentDetailResponses(paymentDetails));
     }
 }

@@ -11,5 +11,8 @@ public interface IPaymentService {
 
     Boolean updatePaymentStatus(Long orderId, Long transactionId, String paymentStatus) throws JsonProcessingException;
 
-    List<PaymentModel> getPaymentDetail(Long orderId);
+    PaymentModel getPaymentDetail(Long transactionId);
+
+    List<PaymentModel> getOrderPaymentDetail(Long orderId);
+
 }
