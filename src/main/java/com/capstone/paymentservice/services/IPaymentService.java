@@ -15,4 +15,5 @@ public interface IPaymentService {
 
     List<PaymentModel> getOrderPaymentDetail(Long orderId);
 
+    Boolean issueRefund(Long transactionId, Double amount) throws JsonProcessingException;
 }

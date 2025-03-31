@@ -2,6 +2,7 @@ package com.capstone.paymentservice.controllers;
 
 import com.capstone.paymentservice.dtos.InitializePaymentDto;
 import com.capstone.paymentservice.dtos.PaymentDetailResponse;
+import com.capstone.paymentservice.dtos.RefundRequestDto;
 import com.capstone.paymentservice.mappers.PaymentMapper;
 import com.capstone.paymentservice.models.PaymentModel;
 import com.capstone.paymentservice.services.IPaymentService;
@@ -36,7 +37,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentLink);
     }
 
-    @PostMapping("/callback")
+    @PostMapping("$(callback.url)")
     public ResponseEntity<Boolean> handlePaymentCallback(@RequestBody Map<String, String> payload) throws JsonProcessingException {
         @NotNull @Positive Long orderId = Long.valueOf(payload.get("order_id"));
         @NotNull @Positive Long transactionId = Long.valueOf(payload.get("transaction_id"));
@@ -55,5 +56,11 @@ public class PaymentController {
     public ResponseEntity<List<PaymentDetailResponse>> getOrderPaymentDetail(@PathVariable Long orderId) throws JsonProcessingException {
         List<PaymentModel> paymentDetails = paymentService.getOrderPaymentDetail(orderId);
         return ResponseEntity.ok(paymentMapper.paymentModelsToPaymentDetailResponses(paymentDetails));
+    }
+
+    @PostMapping("/issueRefund")
+    public ResponseEntity<Boolean> issueRefund(@RequestBody RefundRequestDto refundRequestDto) throws JsonProcessingException {
+        return ResponseEntity.ok(paymentService.issueRefund(refundRequestDto.getTransactionId(),
+                refundRequestDto.getAmount()));
     }
 }

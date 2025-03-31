@@ -3,6 +3,7 @@ package com.capstone.paymentservice.paymentgateway;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.razorpay.Refund;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,19 @@ public class RazorpayPaymentGateway implements IPaymentGateway {
             return payment.get("short_url").toString();
         } catch (RazorpayException exception) {
             throw new RuntimeException(exception.getMessage());
+        }
+    }
+
+    @Override
+    public Boolean issueRefund(Long transactionId, Double amount) {
+        JSONObject refundRequest = new JSONObject();
+        refundRequest.put("amount", amount * 100);
+        refundRequest.put("transaction_id", transactionId.toString());
+        try {
+            Refund refund = razorpayClient.refunds.create(refundRequest);
+            return refund.get("id") != null;
+        } catch (RazorpayException e) {
+            throw new RuntimeException(e);
         }
     }
 }

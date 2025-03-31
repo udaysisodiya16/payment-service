@@ -76,4 +76,23 @@ public class PaymentService implements IPaymentService {
     public List<PaymentModel> getOrderPaymentDetail(Long orderId) {
         return paymentRepo.findAllByOrderId(orderId);
     }
+
+    @Override
+    public Boolean issueRefund(Long transactionId, Double amount) throws JsonProcessingException {
+        PaymentModel payment = paymentRepo.findById(transactionId).orElseThrow(() -> new IllegalArgumentException("Invalid transactionId"));
+        IPaymentGateway paymentGateway = paymentGatewayChooserStrategy.getBestPaymentGateway();
+        Boolean status = paymentGateway.issueRefund(transactionId, amount);
+        if (status) {
+            payment.setStatus(PaymentStatus.REFUNDED);
+            paymentRepo.save(payment);
+
+            PaymentNotificationDto paymentNotificationDto = new PaymentNotificationDto();
+            paymentNotificationDto.setOrderId(payment.getOrderId());
+            paymentNotificationDto.setPaymentStatus(payment.getStatus().name());
+            String message = objectMapper.writeValueAsString(paymentNotificationDto);
+            kafkaClient.sendPaymentNotification(message);
+            return true;
+        }
+        return false;
+    }
 }

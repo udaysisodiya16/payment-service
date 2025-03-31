@@ -4,8 +4,10 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentLink;
 import com.stripe.model.Price;
+import com.stripe.model.Refund;
 import com.stripe.param.PaymentLinkCreateParams;
 import com.stripe.param.PriceCreateParams;
+import com.stripe.param.RefundCreateParams;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +65,20 @@ public class StripePaymentGateway implements IPaymentGateway {
             return Price.create(params);
         } catch (StripeException exception) {
             throw new RuntimeException(exception.getMessage());
+        }
+    }
+
+    @Override
+    public Boolean issueRefund(Long transactionId, Double amount) {
+        RefundCreateParams params = RefundCreateParams.builder()
+                .setPaymentIntent(transactionId.toString())
+                .setAmount((long) (amount * 100))
+                .build();
+        try {
+            Refund refund = Refund.create(params);
+            return refund.getId() != null;
+        } catch (StripeException e) {
+            throw new RuntimeException(e);
         }
     }
 }
